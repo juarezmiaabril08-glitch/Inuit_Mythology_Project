@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmogonía Inuit | Exposición de Literatura</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        polar: {
+                            950: '#01050b', 900: '#030f1c', 800: '#071d36',
+                            700: '#0d2d52', 500: '#1a4e8c', 300: '#5ab0f2', 
+                            100: '#dcf0ff', aurora: '#2dd4bf'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 5s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { 
+            background-color: #01050b; color: #dcf0ff; font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden; line-height: 1.8; -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, .font-title { font-family: 'Cinzel', serif; }
+        
+        /* Efecto Cristal (Glassmorphism) */
+        .glass { background: rgba(7, 29, 54, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(90, 176, 242, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .glass-aurora { background: linear-gradient(135deg, rgba(7,29,54,0.8), rgba(45,212,191,0.1)); backdrop-filter: blur(12px); border: 1px solid rgba(45, 212, 191, 0.3); }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+        /* Nieve interactiva en el fondo */
+        #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.3; }
+
+        /* Stepper interactivo */
+        .step-content { display: none; opacity: 0; transition: opacity 0.4s ease; }
+        .step-content.active { display: block; opacity: 1; animation: slideUp 0.4s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tarjetas 3D Flip (Para Almas) */
+        .flip-card { perspective: 1000px; height: 350px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s ease-in-out; transform-style: preserve-3d; cursor: pointer; }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 1.5rem; padding: 2rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .flip-card-front { background: rgba(7, 29, 54, 0.8); border: 1px solid rgba(90, 176, 242, 0.2); }
+        .flip-card-back { background: rgba(13, 45, 82, 0.95); transform: rotateY(180deg); border: 1px solid #5ab0f2; }
+
+        /* Panel lateral interactivo */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideUp 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="selection:bg-polar-aurora selection:text-polar-950 relative">
+
+    <!-- Lienza de Nieve Animada -->
+    <canvas id="snow-canvas"></canvas>
+
+    <!-- 1. PORTADA PRINCIPAL -->
+    <header class="relative w-full min-h-[95vh] flex items-center justify-center flex-col text-center px-4 z-10 overflow-hidden">
+        <!-- Fondo de luces sin imágenes (Gradientes puros) -->
+        <div class="absolute inset-0 z-[-2]">
+            <div class="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-polar-aurora/15 blur-[120px] rounded-full animate-pulse-slow"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-polar-300/15 blur-[100px] rounded-full"></div>
+        </div>
+
+        <div class="max-w-4xl space-y-8 animate-float">
+            <div class="inline-flex items-center gap-3 px-6 py-2 rounded-full glass border border-polar-300/30 text-polar-300 text-xs tracking-[0.3em] uppercase font-title shadow-[0_0_15px_rgba(90,176,242,0.2)]">
+                Exposición de Literatura
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-title font-black text-white leading-none tracking-tight drop-shadow-2xl">
+                Cosmogonía<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-polar-300 via-polar-aurora to-white">Inuit</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-polar-100/70 max-w-2xl mx-auto font-light leading-relaxed italic border-l-2 border-polar-aurora pl-4">
+                El mundo no nació de un paraíso, nació de la supervivencia. Descubre los mitos del hielo, el origen de los animales y el terror a los monstruos polares.
+            </p>
+
+            <div class="pt-8 mb-6">
+                <span class="bg-polar-900 border border-polar-aurora/50 px-8 py-3 rounded-full font-title text-polar-aurora tracking-[0.2em] uppercase text-sm shadow-[0_0_20px_rgba(45,212,191,0.2)]">
+                    By Abru
+                </span>
+            </div>
+
+            <a href="#cosmogonia" class="inline-block mt-8 text-polar-300 hover:text-white transition-colors animate-bounce">
+                <i class="fa-solid fa-chevron-down text-3xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN -->
+    <nav class="sticky top-0 z-40 bg-polar-950/90 backdrop-blur-md border-b border-polar-800 shadow-xl">
+        <div class="max-w-6xl mx-auto px-4 overflow-x-auto hide-scrollbar">
+            <ul class="flex justify-start md:justify-center gap-6 md:gap-10 py-4 text-[11px] md:text-xs font-title font-bold uppercase tracking-widest text-polar-100/60 whitespace-nowrap">
+                <li><a href="#cosmogonia" class="hover:text-polar-aurora transition-colors">La Creación</a></li>
+                <li><a href="#panteon" class="hover:text-polar-aurora transition-colors">Mitos y Monstruos</a></li>
+                <li><a href="#auroras" class="hover:text-polar-aurora transition-colors">Auroras</a></li>
+                <li><a href="#almas" class="hover:text-polar-aurora transition-colors">Las 3 Almas</a></li>
+                <li><a href="#trivia" class="text-polar-aurora hover:text-white transition-colors"><i class="fa-solid fa-pen-nib mr-1"></i> Prueba Final</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-20 space-y-32 relative z-10">
+
+        <!-- 2. COSMOGONÍA (La Creación - Interactiva) -->
+        <section id="cosmogonia" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <span class="text-polar-aurora font-mono tracking-widest uppercase text-xs">El Origen del Mundo</span>
+                <h2 class="text-4xl md:text-5xl font-title text-white font-bold mt-2">La Formación del Hielo</h2>
+                <p class="max-w-2xl mx-auto text-polar-100/80 text-base mt-4">Navega por los 4 capítulos de la creación para descubrir cómo surgió la tierra, el regalo de los animales y el eterno ciclo del cielo.</p>
+            </div>
+
+            <div class="glass p-6 md:p-10 rounded-3xl border border-polar-800 relative">
+                
+                <!-- Botones de navegación (Stepper) -->
+                  <div class="flex flex-wrap justify-center gap-2 mb-10 border-b border-polar-800 pb-6">
+                    <button onclick="showStoryStep(1)" id="btn-step-1" class="step-btn px-5 py-2 bg-polar-aurora text-polar-950 font-bold font-title uppercase text-xs rounded-lg transition-all shadow-[0_0_15px_rgba(45,212,191,0.4)]">1. Rocas</button>
+                    <button onclick="showStoryStep(2)" id="btn-step-2" class="step-btn px-5 py-2 bg-polar-900 text-polar-300 border border-polar-700 rounded-lg font-title uppercase text-xs hover:bg-polar-800 transition-all">2. Kaila</button>
+                    <button onclick="showStoryStep(3)" id="btn-step-3" class="step-btn px-5 py-2 bg-polar-900 text-polar-300 border border-polar-700 rounded-lg font-title uppercase text-xs hover:bg-polar-800 transition-all">3. Amarok</button>
+                    <button onclick="showStoryStep(4)" id="btn-step-4" class="step-btn px-5 py-2 bg-polar-900 text-polar-300 border border-polar-700 rounded-lg font-title uppercase text-xs hover:bg-polar-800 transition-all">4. Astros</button>
+                </div>
+
+                <!-- Contenido de los pasos -->
+                <div class="min-h-[250px] flex items-center justify-center">
+                    
+                    <!-- Capítulo 1 -->
+                    <div id="step-1" class="step-content active text-center max-w-3xl mx-auto">
+                        <i class="fa-solid fa-cubes-stacked text-6xl text-polar-300 mb-6 drop-shadow-[0_0_15px_#5ab0f2]"></i>
+                        <h3 class="text-3xl font-title text-white mb-4">El Océano y las Rocas</h3>
+                        <p class="text-polar-100/90 text-lg italic leading-relaxed">
+                            "Al principio, el mundo era solamente agua, una vasta inmensidad de agua oscura y helada. Un día, empezaron a caer rocas del cielo; estas se fueron acumulando hasta crear la tierra firme."
+                        </p>
+                    </div>
+
+                    <!-- Capítulo 2 -->
+                    <div id="step-2" class="step-content text-center max-w-3xl mx-auto">
+                        <i class="fa-solid fa-icicles text-6xl text-polar-300 mb-6"></i>
+                        <h3 class="text-3xl font-title text-white mb-4">Kaila y el Agujero en el Hielo</h3>
+                        <p class="text-polar-100/90 text-lg italic leading-relaxed">
+                            "En el origen, tan solo había un hombre y una mujer. La mujer pidió a Kaila, el dios del cielo, que poblara la Tierra. Kaila le ordenó hacer un agujero en el hielo para pescar. Ella sacó a todos los animales, sacando en último lugar al caribú. Kaila le dijo que era el mejor regalo, porque alimentaría a su pueblo, daría carne y abrigo."
+                        </p>
+                    </div>
+
+                    <!-- Capítulo 3 -->
+                    <div id="step-3" class="step-content text-center max-w-3xl mx-auto">
+                        <i class="fa-solid fa-wolf-pack-battles text-6xl text-polar-aurora mb-6 drop-shadow-[0_0_15px_rgba(45,212,191,0.5)]"></i>
+                        <h3 class="text-3xl font-title text-white mb-4">El Propósito del Lobo</h3>
+                        <p class="text-polar-100/90 text-lg italic leading-relaxed">
+                            "Los humanos elegían cazar siempre los caribúes más bellos. Pronto solo quedaron los débiles, y los inuits se enfermaban al comerlos. La Mujer se quejó a Kaila. Él la mandó al hielo y ella pescó al lobo, enviado por <strong>Amarok</strong>, para que se comiera a los animales enfermos y mantuviera sana a la manada."
+                        </p>
+                    </div>
+
+                    <!-- Capítulo 4 -->
+                    <div id="step-4" class="step-content text-center max-w-3xl mx-auto">
+                        <i class="fa-solid fa-eclipse text-6xl text-yellow-500 mb-6 drop-shadow-[0_0_15px_rgba(234,179,8,0.4)]"></i>
+                        <h3 class="text-3xl font-title text-white mb-4">La Persecución del Sol y la Luna</h3>
+                        <p class="text-polar-100/90 text-lg italic leading-relaxed">
+                            "El mito de los hermanos en Groenlandia, los hermanos Malina y Aningan eran hermanos de sangre humanos. Una noche oscura, adentro de un iglú sin luces, Aningan atacó e intentó abusar de su hermana. Durante la pelea a oscuras, Malina se manchó las manos con el hollín de una lámpara de aceite y se lo untó en la cara a su atacante para poder reconocerlo después. Al encenderse la luz, ella descubrió con horror que el atacante era su propio hermano. Llena de ira y vergüenza, agarró una antorcha encendida y huyó corriendo hacia el cielo. Finalmente Malina se convirtió en el Sol ardiente y Aningan se transformó en la Luna. Las manchas oscuras que le vemos a la luna son en realidad las marcas de hollín que ella le dejó en el rostro. Desde entonces, él la persigue sin descanso, pero su obsesión es tan grande que olvida comer durante la persecución. Por eso, al principio del mes se lo ve lleno, pero a medida que pasan los días, se vuelve cada vez más delgado y débil hasta desaparecer (la luna menguante), momento en el que se detiene para alimentarse, recupera sus fuerzas y vuelve a aparecer en el cielo"
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PANTEÓN Y BESTIARIO (Panel Interactivo Lateral) -->
+        <section id="panteon" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <span class="text-polar-aurora font-mono tracking-widest uppercase text-xs">Información Antropológica</span>
+                <h2 class="text-4xl md:text-5xl font-title text-white font-bold mt-2">Mitos y Monstruos</h2>
+                <p class="max-w-2xl mx-auto text-polar-100/80 text-base mt-4">Los dioses inuit no eran benevolentes; exigían respeto absoluto. Toca los nombres en la lista para descubrir sus espeluznantes leyendas.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Menú Lateral -->
+                <div class="lg:col-span-1 flex flex-col gap-3">
+                    <button onclick="showMonsterTab('sedna')" id="tab-btn-sedna" class="tab-btn w-full text-left p-4 rounded-xl bg-polar-800 border border-polar-aurora shadow-[0_0_10px_rgba(45,212,191,0.2)] transition-all">
+                        <span class="font-title font-bold text-white text-lg">Sedna</span>
+                        <span class="block text-[10px] text-polar-aurora uppercase tracking-widest font-mono mt-1">Diosa del Océano</span>
+                    </button>
+                    <button onclick="showMonsterTab('cuervo')" id="tab-btn-cuervo" class="tab-btn w-full text-left p-4 rounded-xl glass border border-polar-700 hover:bg-polar-800 transition-all">
+                        <span class="font-title font-bold text-white text-lg">Tulugak</span>
+                        <span class="block text-[10px] text-polar-300 uppercase tracking-widest font-mono mt-1">El Cuervo Creador</span>
+                    </button>
+                    <button onclick="showMonsterTab('mahaha')" id="tab-btn-mahaha" class="tab-btn w-full text-left p-4 rounded-xl glass border border-polar-700 hover:bg-polar-800 transition-all">
+                        <span class="font-title font-bold text-white text-lg">Mahaha</span>
+                        <span class="block text-[10px] text-polar-300 uppercase tracking-widest font-mono mt-1">El Demonio Helado</span>
+                    </button>
+                    <button onclick="showMonsterTab('qalupalik')" id="tab-btn-qalupalik" class="tab-btn w-full text-left p-4 rounded-xl glass border border-polar-700 hover:bg-polar-800 transition-all">
+                        <span class="font-title font-bold text-white text-lg">Qalupalik</span>
+                        <span class="block text-[10px] text-polar-300 uppercase tracking-widest font-mono mt-1">El Secuestrador</span>
+                    </button>
+                </div>
+
+                <!-- Panel de Contenido -->
+                <div class="lg:col-span-2 glass rounded-3xl border border-polar-700 p-8 min-h-[400px] flex items-center">
+                    
+                    <!-- Sedna -->
+                    <div id="tab-sedna" class="tab-content active space-y-4">
+                        <div class="flex items-center gap-4 border-b border-polar-700 pb-4 mb-4">
+                            <i class="fa-solid fa-water text-5xl text-blue-400"></i>
+                            <div>
+                                <h3 class="text-3xl font-title text-white">Sedna, la Mutilada</h3>
+                                <p class="text-xs text-polar-300 font-mono uppercase tracking-widest mt-1">La Madre de las Focas</p>
+                            </div>
+                        </div>
+                        <p class="text-polar-100/90 leading-relaxed">
+                            Sedna era una joven que fue engañada por un espíritu-pájaro que le prometió una vida de lujos. Al descubrir que vivía en la miseria, intentó escapar con ayuda de su padre en un bote, pero el espíritu los persiguió desatando una tormenta feroz. En un acto de desesperación por salvar su vida, el padre arrojó a Sedna al mar. Cuando ella intentó aferrarse al bote para no caer, su padre le cortó los dedos. Al sumergirse, esos dedos se transformaron en las focas, morsas y ballenas que alimentan al pueblo inuit. Desde entonces, Sedna habita en el fondo del océano como dueña de los animales marinos.
+                        </p>
+                        <div class="bg-polar-900/80 border-l-2 border-polar-aurora p-4 rounded-r-lg mt-4 text-sm text-polar-100/70">
+                            <strong>El Castigo:</strong> Sedna gobierna el abismo (Adlivun). Como no tiene dedos, no puede peinarse. Si los humanos rompen los tabúes, esa "suciedad" se enreda en su pelo; se enfurece y esconde a los animales provocando hambre, hasta que un chamán viaja en trance para peinarla.
+                        </div>
+                    </div>
+
+                    <!-- Tulugak -->
+                    <div id="tab-cuervo" class="tab-content space-y-4">
+                        <div class="flex items-center gap-4 border-b border-polar-700 pb-4 mb-4">
+                            <i class="fa-solid fa-crow text-5xl text-gray-400"></i>
+                            <div>
+                                <h3 class="text-3xl font-title text-white">Tulugak</h3>
+                                <p class="text-xs text-polar-300 font-mono uppercase tracking-widest mt-1">El Cuervo y la Luz</p>
+                            </div>
+                        </div>
+                        <p class="text-polar-100/90 leading-relaxed">
+                            En los mitos, el Cuervo no es majestuoso, sino un "trickster" (embaucador). El mundo vivía originalmente en la oscuridad absoluta porque un anciano avaro mantenía la luz guardada en esferas dentro de su casa. 
+                        </p>
+                        <p class="text-polar-100/90 leading-relaxed">
+                                                      El Cuervo, un ser astuto con poderes mágicos, decidió liberar la luz para el beneficio de todos. Para lograrlo, se infiltró en la familia del anciano haciéndose pasar por su nieto y así ganarse su confianza. Un día, aprovechando un descuido, el Cuervo recuperó su forma de ave, robó las esferas, rompió el techo de la casa y salió volando hacia el cielo. Al lanzar las esferas al firmamento, creó el Sol, las estrellas y el ciclo del día y la noche, permitiendo que la humanidad pudiera ver y prosperar
+                        </p>
+                    </div>
+
+                    <!-- Mahaha -->
+                    <div id="tab-mahaha" class="tab-content space-y-4">
+                        <div class="flex items-center gap-4 border-b border-polar-700 pb-4 mb-4">
+                            <i class="fa-regular fa-face-laugh-squint text-5xl text-purple-400"></i>
+                            <div>
+                                <h3 class="text-3xl font-title text-white">Mahaha</h3>
+                                <p class="text-xs text-polar-300 font-mono uppercase tracking-widest mt-1">El Demonio de las Cosquillas</p>
+                            </div>
+                        </div>
+                        <p class="text-polar-100/90 leading-relaxed">
+                            Un demonio escalofriante de la tundra. Es delgado, de piel azul pálido congelada, con ojos blancos y dedos increíblemente largos y afilados.
+                        </p>
+                        <div class="bg-polar-900/80 border-l-2 border-purple-400 p-4 rounded-r-lg mt-4 text-sm text-polar-100/70">
+                            <strong>El Ataque:</strong> Cuando Mahaha atrapa a un humano solitario, lo ataca haciéndole cosquillas con sus largas garras. Lo hace con tanta fuerza que la víctima muere asfixiada de risa, dejando su cadáver en la nieve con una sonrisa congelada aterradora.
+                        </div>
+                    </div>
+
+                    <!-- Qalupalik -->
+                    <div id="tab-qalupalik" class="tab-content space-y-4">
+                        <div class="flex items-center gap-4 border-b border-polar-700 pb-4 mb-4">
+                            <i class="fa-solid fa-hands-holding-child text-5xl text-emerald-400"></i>
+                            <div>
+                                <h3 class="text-3xl font-title text-white">Qalupalik</h3>
+                                <p class="text-xs text-polar-300 font-mono uppercase tracking-widest mt-1">El Monstruo Preventivo</p>
+                            </div>
+                        </div>
+                        <p class="text-polar-100/90 leading-relaxed">
+                            Un humanoide deforme, de piel verde escamosa y pelo mojado, que habita debajo de las fisuras del hielo. Lleva puesto un <em>amautik</em> (la bolsa inuit para cargar bebés) pero en tamaño gigante.
+                        </p>
+                        <div class="bg-polar-900/80 border-l-2 border-emerald-400 p-4 rounded-r-lg mt-4 text-sm text-polar-100/70">
+                            <strong>Función Educativa:</strong> Este mito fue inventado por los padres para asustar a los niños. Evitaba que los más pequeños se acercaran al hielo frágil en primavera, advirtiéndoles que Qalupalik los atraparía y se los llevaría bajo el agua para siempre.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. AURORAS BOREALES -->
+        <section id="auroras" class="scroll-mt-24">
+            <div class="glass-aurora rounded-3xl p-10 md:p-16 text-center border-t-2 border-polar-aurora relative overflow-hidden">
+                <i class="fa-solid fa-star-shooting absolute -top-10 -left-10 text-[200px] opacity-[0.03] text-white"></i>
+                <h2 class="text-4xl font-title text-white font-bold mb-6">Aksarnirq: Las Auroras</h2>
+                <p class="text-lg text-polar-100/90 max-w-3xl mx-auto leading-relaxed mb-6">
+                    Las luces del norte no eran solo clima para los inuit. Creían fervientemente que las auroras boreales eran las almas de los difuntos, <strong>jugando un partido de pelota en el cielo</strong> utilizando un cráneo de morsa.
+                </p>
+                <div class="inline-block bg-polar-900/60 border border-polar-500 rounded-lg p-4 text-sm text-polar-300 max-w-xl mx-auto">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Un mito advertía a los niños: si le silbabas a las auroras, estas bajarían y te cortarían la cabeza para usarla como pelota en el firmamento.
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. LAS ALMAS (Flip Cards) -->
+        <section id="almas" class="scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-title text-white font-bold mb-4">La Arquitectura del Espíritu</h2>
+                <p class="max-w-2xl mx-auto text-polar-100/80 text-base">Un ser humano inuit no posee una sola alma, sino tres distintas con funciones específicas. Pasa el cursor (o toca) para voltearlas.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Anirniq -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front shadow-xl">
+                            <i class="fa-solid fa-wind text-6xl text-polar-300 mb-6 drop-shadow-[0_0_15px_#5ab0f2]"></i>
+                            <h3 class="text-3xl font-title text-white mb-2">Anirniq</h3>
+                            <p class="text-polar-300 font-bold uppercase tracking-widest text-xs">El Aliento Vital</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3 class="text-2xl font-title text-white mb-3 border-b border-polar-300/30 pb-2">Energía Física</h3>
+                            <p class="text-sm text-polar-100/90 leading-relaxed">Es la respiración y el calor del cuerpo. Al morir, el Anirniq se evapora y se une al viento y la atmósfera. No tiene consciencia ni recuerdos propios.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarneq -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front shadow-xl">
+                            <i class="fa-solid fa-ghost text-6xl text-purple-400 mb-6 drop-shadow-[0_0_15px_#c084fc]"></i>
+                            <h3 class="text-3xl font-title text-white mb-2">Tarneq</h3>
+                            <p class="text-purple-400 font-bold uppercase tracking-widest text-xs">La Mente</p>
+                        </div>
+                        <div class="flip-card-back !border-purple-400">
+                            <h3 class="text-2xl font-title text-white mb-3 border-b border-purple-400/30 pb-2">El Viajero</h3>
+                            <p class="text-sm text-polar-100/90 leading-relaxed">Es la personalidad y la consciencia. Al morir, el Tarneq es el alma que emprende el viaje definitivo hacia el cielo (Qilak) o hacia el fondo del mar (Adlivun).</p>
+                        </div>
+                    </div>
+                </div>
+                               <!-- Ateq -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front shadow-xl">
+                            <i class="fa-solid fa-signature text-6xl text-amber-400 mb-6 drop-shadow-[0_0_15px_#fbbf24]"></i>
+                            <h3 class="text-3xl font-title text-white mb-2">Ateq</h3>
+                            <p class="text-amber-400 font-bold uppercase tracking-widest text-xs">El Nombre Mágico</p>
+                        </div>
+                        <div class="flip-card-back !border-amber-400">
+                            <h3 class="text-2xl font-title text-white mb-3 border-b border-amber-400/30 pb-2">La Reencarnación</h3>
+                            <p class="text-sm text-polar-100/90 leading-relaxed">El nombre tiene magia ancestral. Si nombras a un bebé con el "Ateq" de su abuelo muerto, el bebé hereda automáticamente las habilidades, fuerza y talento de ese ancestro.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. PRUEBA FINAL (Trivia robusta) -->
+        <section id="trivia" class="scroll-mt-24 mb-10">
+            <div class="glass p-8 md:p-14 rounded-3xl border border-polar-500 text-center relative overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.1)]">
+                
+                <!-- Pantalla de Inicio -->
+                <div id="quiz-intro">
+                    <i class="fa-solid fa-list-check text-6xl text-polar-aurora mb-6"></i>
+                    <h2 class="text-4xl md:text-5xl font-title font-bold text-white mb-4">El Juicio de Sila</h2>
+                    <p class="text-lg text-polar-100/80 mb-10 max-w-2xl mx-auto">Demuestra qué tanto aprendiste en esta exposición. Responde las 10 preguntas preparadas por Abru y descubre tu rango en la tribu.</p>
+                    <button onclick="startQuiz()" class="bg-polar-aurora text-polar-950 px-10 py-4 rounded-full font-bold font-title tracking-widest uppercase hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(45,212,191,0.4)] cursor-pointer">
+                        Iniciar Prueba <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+                <!-- Pantalla de Pregunta -->
+                <div id="quiz-game" class="hidden text-left max-w-2xl mx-auto">
+                    <div class="flex justify-between items-center mb-6 border-b border-polar-700 pb-4">
+                        <span id="quiz-counter" class="text-polar-aurora font-mono font-bold tracking-widest uppercase text-sm">Pregunta 1/10</span>
+                        <div class="flex gap-1" id="dots-container">
+                            <!-- Indicadores de progreso por JS -->
+                        </div>
+                    </div>
+                    
+                    <h3 id="quiz-question" class="text-2xl md:text-3xl font-title text-white mb-8 min-h-[80px]">Pregunta</h3>
+                    
+                    <div id="quiz-options" class="space-y-3">
+                        <!-- Botones por JS -->
+                    </div>
+                </div>
+
+                <!-- Pantalla de Resultados -->
+                <div id="quiz-result" class="hidden text-center">
+                    <i class="fa-solid fa-medal text-7xl text-yellow-400 mb-6 drop-shadow-[0_0_20px_rgba(250,204,21,0.5)]"></i>
+                    <h2 class="text-4xl font-title font-bold text-white mb-4">Evaluación Completada</h2>
+                    
+                    <div class="flex justify-center items-center gap-6 my-8">
+                        <div class="text-8xl font-title font-black text-polar-300 drop-shadow-[0_0_15px_rgba(105,189,250,0.5)]" id="final-score">10</div>
+                        <div class="text-4xl text-polar-500 font-title font-bold mt-4">/ 10</div>
+                    </div>
+                    
+                    <div class="bg-polar-900/80 border border-polar-700 p-6 rounded-2xl max-w-lg mx-auto mb-10">
+                        <span class="text-xs uppercase font-mono tracking-widest text-polar-aurora block mb-2">Tu Rango</span>
+                        <h3 id="quiz-rank" class="text-2xl font-title font-bold text-white mb-2">Gran Chamán</h3>
+                        <p id="quiz-msg" class="text-polar-100/80 text-sm">Mensaje</p>
+                    </div>
+                    
+                    <button onclick="startQuiz()" class="bg-polar-800 border border-polar-500 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-polar-700 transition-all cursor-pointer">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Volver a Intentarlo
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-polar-950 py-10 border-t border-polar-900 text-center relative z-10 mt-10">
+        <h3 class="font-title text-polar-300 tracking-[0.3em] uppercase text-sm mb-2">Exposición de Literatura</h3>
+        <p class="text-polar-100/40 text-xs tracking-widest font-mono">Cosmogonía de Inuit</p>
+        
+        <div class="mt-8">
+            <span class="text-xs font-title tracking-[0.4em] text-polar-950 bg-polar-aurora font-bold uppercase px-6 py-2 rounded-full shadow-[0_0_15px_rgba(45,212,191,0.3)]">By Abru</span>
+        </div>
+    </footer>
+
+    <!-- SCRIPT PRINCIPAL: Lógica interactiva 100% funcional -->
+    <script>
+        // --- 1. NIEVE INTERACTIVA ---
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initSnow() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 2 + 0.5,
+                    d: Math.random() * 1 + 0.5 // velocidad
+                });
+            }
+        }
+        window.addEventListener('resize', initSnow);
+        initSnow();
+
+        function animateSnow() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.beginPath();
+            particles.forEach(p => {
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, true);
+                p.y += p.d;
+                p.x += Math.sin(p.y * 0.01) * 0.5;
+                if (p.y > canvas.height) {
+                    p.y = -10;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+            ctx.fill();
+            requestAnimationFrame(animateSnow);
+        }
+        animateSnow();
+
+
+        // --- 2. LÓGICA DEL STEPPER (La Creación) ---
+        function showStoryStep(stepId) {
+            // Ocultar contenidos
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Mostrar el elegido
+            document.getElementById(`step-${stepId}`).classList.add('active');
+
+            // Resetear botones
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.className = 'step-btn px-5 py-2 bg-polar-900 text-polar-300 border border-polar-700 rounded-lg font-title uppercase text-xs hover:bg-polar-800 transition-all cursor-pointer';
+            });
+            // Resaltar botón activo
+            document.getElementById(`btn-step-${stepId}`).className = 'step-btn px-5 py-2 bg-polar-aurora text-polar-950 font-bold font-title uppercase text-xs rounded-lg transition-all shadow-[0_0_15px_rgba(45,212,191,0.4)] cursor-pointer';
+        }
+
+
+        // --- 3. LÓGICA DE LAS PESTAÑAS (Mitos y Monstruos) ---
+        function showMonsterTab(tabId) {
+            // Ocultar contenidos
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Mostrar el elegido
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Resetear botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn w-full text-left p-4 rounded-xl glass border border-polar-700 hover:bg-polar-800 transition-all cursor-pointer";
+                btn.querySelector('span:last-child').classList.replace('text-polar-aurora', 'text-polar-300');
+            });
+            // Resaltar botón activo
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.className = "tab-btn w-full text-left p-4 rounded-xl bg-polar-800 border border-polar-aurora shadow-[0_0_10px_rgba(45,212,191,0.2)] transition-all cursor-pointer";
+            activeBtn.querySelector('span:last-child').classList.replace('text-polar-300', 'text-polar-aurora');
+        }
+
+
+        // --- 4. LÓGICA DE LA TRIVIA (10 Preguntas) ---
+        const quizData = [
+            { q: "Al principio, ¿qué cayó del cielo sobre el agua para formar la tierra firme?", opts: ["Trozos de hielo.", "Rocas que se acumularon.", "Huesos de ballena.", "Nieve mágica."], ans: 1 },
+            { q: "¿Quién le ordenó a la mujer hacer un agujero en el hielo para pescar a los animales?", opts: ["Amarok", "Tulugak", "Sedna", "Kaila"], ans: 3 },
+            { q: "Según la leyenda, ¿por qué fue enviado el lobo Amarok a la tierra?", opts: ["Para devorar a los caribúes enfermos y purificar la manada.", "Para ser usado en trineos.", "Como castigo a los humanos.", "Para cazar a las morsas."], ans: 0 },
+            { q: "¿De qué parte del cuerpo de Sedna nacieron las focas y ballenas?", opts: ["Sus lágrimas.", "Su cabello.", "Sus dedos cortados.", "Su sangre."], ans: 2 },
+            { q: "En la mitología inuit, ¿qué sucede cuando los humanos rompen las reglas (tabúes)?", opts: ["Sedna se ensucia el cabello y esconde a los animales.", "Kaila destruye el mundo.", "El Sol se apaga.", "Nada."], ans: 0 },
+            { q: "Las auroras boreales (Aksarnirq) eran consideradas...", opts: ["Reflejos del hielo.", "El aliento de los osos.", "Almas jugando a la pelota con un cráneo de morsa.", "Lágrimas de la Luna."], ans: 2 },
+            { q: "¿Quién es el demonio azul y de largos dedos que mata a sus víctimas haciéndoles cosquillas?", opts: ["Qalupalik", "Mahaha", "Tulugak", "Amarok"], ans: 1 },
+            { q: "¿Para qué inventaron los inuit la aterradora figura de Qalupalik?", opts: ["Para adorarlo.", "Para espantar lobos.", "Para evitar que los niños se acercaran al hielo frágil en primavera.", "Para explicar las tormentas."], ans: 2 },
+            { q: "¿Por qué el hermano persigue eternamente a la hermana en el firmamento (Sol y Luna)?", opts: ["Por odio.", "Por obsesión y acoso constante hacia ella.", "Para robarle la luz.", "Porque Kaila los castigó."], ans: 1 },
+            { q: "En el sistema del alma, ¿cuál es el nombre del alma ancestral que permite al bebé heredar las habilidades de un abuelo?", opts: ["Ateq", "Anirniq", "Tarneq", "Inua"], ans: 0 }
+        ];
+
+        let currentQIndex = 0;
+        let score = 0;
+        let isAnswering = false;
+
+        function renderDots() {
+            const container = document.getElementById('dots-container');
+            container.innerHTML = '';
+            for(let i = 0; i < quizData.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full ${i <= currentQIndex ? 'bg-polar-aurora shadow-[0_0_5px_#2dd4bf]' : 'bg-polar-700'}`;
+                container.appendChild(dot);
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-game').classList.remove('hidden');
+            currentQIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswering = false;
+            renderDots();
+            const q = quizData[currentQIndex];
+            document.getElementById('quiz-counter').innerText = `Pregunta ${currentQIndex + 1} / 10`;
+            document.getElementById('quiz-question').innerText = q.q;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.opts.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 bg-polar-900/60 border border-polar-700 rounded-xl text-polar-100 hover:border-polar-300 hover:bg-polar-800 transition-all font-sans text-base group flex justify-between items-center cursor-pointer";
+                btn.innerHTML = `<span>${optText}</span> <i class="fa-solid fa-angle-right opacity-0 group-hover:opacity-100 transition-opacity"></i>`;
+                
+                btn.onclick = () => processAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function processAnswer(selectedIndex, btnElement) {
+            if (isAnswering) return;
+            isAnswering = true;
+
+            const correctIndex = quizData[currentQIndex].ans;
+            const allButtons = document.getElementById('quiz-options').querySelectorAll('button');
+
+            // Deshabilitar todos los botones al responder
+            allButtons.forEach(b => {
+                b.disabled = true;
+                b.classList.remove('hover:bg-polar-800', 'hover:border-polar-300', 'cursor-pointer');
+                b.classList.add('cursor-default', 'opacity-70');
+            });
+
+            if (selectedIndex === correctIndex) {
+            // Correcto: Botón Verde
+                btnElement.className = "w-full text-left p-4 bg-polar-aurora border border-polar-aurora rounded-xl text-polar-950 font-bold flex justify-between items-center shadow-[0_0_15px_rgba(45,212,191,0.5)] transition-all cursor-default opacity-100";
+                btnElement.innerHTML = `<span>${quizData[currentQIndex].opts[selectedIndex]}</span> <i class="fa-solid fa-check text-polar-950 text-xl"></i>`;
+                score++;
+            } else {
+                // Incorrecto: Botón Rojo
+                btnElement.className = "w-full text-left p-4 bg-red-600/90 border border-red-500 rounded-xl text-white flex justify-between items-center transition-all cursor-default opacity-100";
+                btnElement.innerHTML = `<span>${quizData[currentQIndex].opts[selectedIndex]}</span> <i class="fa-solid fa-xmark text-white text-xl"></i>`;
+                
+                // Mostrar la opción correcta en Verde
+                const correctBtn = allButtons[correctIndex];
+                correctBtn.className = "w-full text-left p-4 bg-polar-aurora border border-polar-aurora rounded-xl text-polar-950 font-bold flex justify-between items-center mt-2 transition-all cursor-default opacity-100";
+                correctBtn.innerHTML = `<span>${quizData[currentQIndex].opts[correctIndex]}</span> <i class="fa-solid fa-check text-polar-950 text-xl"></i>`;
+            }
+
+            // Temporizador para pasar a la siguiente pregunta
+            setTimeout(() => {
+                currentQIndex++;
+                if (currentQIndex < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showFinalResult();
+                }
+            }, 1800); // Espera 1.8 segundos para que puedan leer
+        }
+
+        function showFinalResult() {
+            document.getElementById('quiz-game').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = score;
+            
+            let rank = "";
+            let msg = "";
+            if (score >= 9) {
+                rank = "Angakkuq (Gran Chamán)";
+                msg = "¡Impresionante! Comprendes a la perfección los mitos y el equilibrio del Ártico. Tienes un 10 en la exposición.";
+            } else if (score >= 6) {
+                rank = "Cazador Sabio";
+                msg = "Tienes un excelente entendimiento de las deidades y la supervivencia, pero ten cuidado con el hielo frágil.";
+            } else {
+                rank = "Alma Perdida";
+                msg = "El demonio Mahaha te ha distraído con sus cosquillas. Necesitas volver a leer la exposición para sobrevivir.";
+            }
+            
+            document.getElementById('quiz-rank').innerText = rank;
+            document.getElementById('quiz-msg').innerText = msg;
+        }
+    </script>
+</body>
+</html>
